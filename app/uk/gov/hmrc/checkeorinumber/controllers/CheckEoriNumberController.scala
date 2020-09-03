@@ -43,13 +43,13 @@ class CheckEoriNumberController @Inject()(
   //  }
     Action.async { implicit request =>
       eoriNumber match {
-        case en if en == "GB123456789001" =>
+        case en if en.last == '1' =>
           Future.successful(
             Ok(
               Json.toJson(
                 CheckResponse(
                   isValidEori = true,
-                  "GB123456789001",
+                  en,
                   Some(
                     EoriRegisteredCompany(
                       "Hay's Limonard",
@@ -68,13 +68,13 @@ class CheckEoriNumberController @Inject()(
               )
             )
           )
-        case en if en == "GB123456789002" =>
+        case en if en.last == '2' =>
           Future.successful(
             Ok(
-              Json.toJson(CheckResponse(isValidEori = true, "GB123456789002", None))
+              Json.toJson(CheckResponse(isValidEori = true, en, None))
             )
           )
-        case _ => Future.successful(Ok(Json.toJson(CheckResponse(isValidEori = false, "", None))))
+        case en => Future.successful(Ok(Json.toJson(CheckResponse(isValidEori = false, en, None))))
       }
     }
 }
