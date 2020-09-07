@@ -14,17 +14,33 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.checkeorinumber.config
+package uk.gov.hmrc.checkeorinumber.models
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.json.{Json, OFormat}
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+case class Address(
+  line1: String,
+  line2: Option[String],
+  line3: Option[String],
+  line4: Option[String],
+  line5: Option[String],
+  postcode: Option[String],
+  countryCode: String
+) {
+  def lines: List[String] = {
+    line1 +: List(
+      line2,
+      line3,
+      line4,
+      line5,
+      postcode
+    ).collect { case Some(str) =>
+      str
+    } :+ countryCode
+  }
+}
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
-
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+object Address {
+  implicit val addressFormat: OFormat[Address] =
+    Json.format[Address]
 }

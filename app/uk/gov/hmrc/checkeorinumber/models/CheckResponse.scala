@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.checkeorinumber.config
+package uk.gov.hmrc.checkeorinumber.models
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import java.time.{ZoneId, ZonedDateTime}
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, servicesConfig: ServicesConfig) {
+import play.api.libs.json.{Json, OFormat}
 
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
+case class CheckResponse (
+  isValidEori: Boolean,
+  eoriNumber: EoriNumber,
+  eoriRegisteredCompany: Option[EoriRegisteredCompany],
+  processingDate: ProcessingDate = ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London"))
+)
 
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+object CheckResponse {
+  implicit val checkResponseFormat: OFormat[CheckResponse] = Json.format[CheckResponse]
 }
