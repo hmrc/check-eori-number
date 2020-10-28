@@ -19,7 +19,7 @@ package uk.gov.hmrc.checkeorinumber.models
 import play.api.libs.json.{Json, OFormat}
 
 case class EoriRegisteredCompany(
-  companyName: CompanyName,
+  companyName: TraderName,
   address: Address
 )
 

@@ -21,9 +21,10 @@ import java.time.{ZoneId, ZonedDateTime}
 import play.api.libs.json.{Json, OFormat}
 
 case class CheckResponse (
-  isValidEori: Boolean,
-  eoriNumber: EoriNumber,
-  eoriRegisteredCompany: Option[EoriRegisteredCompany],
+  eori: EoriNumber,
+  valid: Boolean,
+  traderName: Option[TraderName],
+  address: Option[Address],
   processingDate: ProcessingDate = ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London"))
 )
 

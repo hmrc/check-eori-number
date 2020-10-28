@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.checkeorinumber
+package uk.gov.hmrc.checkeorinumber.models.internal
 
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import play.api.libs.json.{Json, OFormat}
+import uk.gov.hmrc.checkeorinumber.models.CheckResponse
 
-package object models {
+case class IdentificationsResponse (identifications: CheckResponse)
 
-  type TraderName = String
-  type EoriNumber = String
-  type ProcessingDate = ZonedDateTime
-
-  implicit class RichProcessingDate(val self: ProcessingDate) {
-    override def toString: String = self.format(DateTimeFormatter.ofPattern("h:mma"))
-  }
+object IdentificationsResponse {
+  implicit val identificationsResponseFormat: OFormat[IdentificationsResponse] = Json.format
 }
