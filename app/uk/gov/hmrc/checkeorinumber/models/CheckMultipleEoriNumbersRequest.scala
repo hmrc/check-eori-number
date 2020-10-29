@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.checkeorinumber.models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 
-case class EoriRegisteredCompany(
-  companyName: CompanyName,
-  address: Address
+case class CheckMultipleEoriNumbersRequest(
+  eoriNumbers: List[EoriNumber]
 )
 
-object EoriRegisteredCompany {
-  implicit val eoriRegisteredCompany: OFormat[EoriRegisteredCompany] = Json.format[EoriRegisteredCompany]
+object CheckMultipleEoriNumbersRequest {
+  implicit val format: OFormat[CheckMultipleEoriNumbersRequest] = Json.format[CheckMultipleEoriNumbersRequest]
+
 }

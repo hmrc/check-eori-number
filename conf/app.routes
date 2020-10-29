@@ -1,5 +1,6 @@
 # microservice specific routes
 
-GET        /hello-world                         uk.gov.hmrc.checkeorinumber.controllers.MicroserviceHelloWorldController.hello
+GET        /hello-world               uk.gov.hmrc.checkeorinumber.controllers.MicroserviceHelloWorldController.hello
 
-GET        /check-eori/:eoriNumber              uk.gov.hmrc.checkeorinumber.controllers.CheckEoriNumberController.check(eoriNumber: String)
+GET        /check-eori/:eoriNumber    uk.gov.hmrc.checkeorinumber.controllers.CheckEoriNumberController.check(eoriNumber: String)
+POST       /check-multiple-eori       uk.gov.hmrc.checkeorinumber.controllers.CheckEoriNumberController.checkMultipleEoris
