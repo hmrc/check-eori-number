@@ -36,8 +36,6 @@ class CheckEoriNumberControllerSpec extends BaseSpec {
   val checkResponse = CheckResponse(eoriNumber, true, None, None)
   val invalidCheckResponse = CheckResponse(invalidEoriNumber, false, None, None)
 
-
-
   val controller = new CheckEoriNumberController(
     appConfig,
     Helpers.stubControllerComponents(),
@@ -67,7 +65,6 @@ class CheckEoriNumberControllerSpec extends BaseSpec {
       )
     )
     val request = FakeRequest("POST", "/check-multiple-eori", FakeHeaders(), jsonBody)
-
     "return 200" in {
       val result: Future[play.api.mvc.Result] = controller.checkMultipleEoris().apply(request)
       status(result) shouldBe Status.OK
@@ -78,7 +75,6 @@ class CheckEoriNumberControllerSpec extends BaseSpec {
         List(checkResponse, invalidCheckResponse)
       )
     }
-
   }
 
   class MockEISConnector extends EISConnector {
