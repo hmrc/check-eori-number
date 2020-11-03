@@ -36,8 +36,8 @@ class CheckEoriNumberController @Inject()(
 
   def check(eoriNumber: EoriNumber): Action[AnyContent] = {
     Action.async { implicit request =>
-      connector.checkEoriNumbers(CheckMultipleEoriNumbersRequest(List(eoriNumber))).map { pr =>
-        Ok(Json.toJson(pr.party.map(_.identifications)))
+      connector.checkEoriNumbers(CheckMultipleEoriNumbersRequest(List(eoriNumber))).map { checkResponse =>
+        Ok(Json.toJson(checkResponse))
       }
     }
   }
@@ -45,8 +45,8 @@ class CheckEoriNumberController @Inject()(
   def checkMultipleEoris: Action[JsValue] = {
     Action.async(parse.json) { implicit request =>
       withJsonBody[CheckMultipleEoriNumbersRequest](cmr => {
-        connector.checkEoriNumbers(cmr).map { pr =>
-          Ok(Json.toJson(pr.party.map(_.identifications)))
+        connector.checkEoriNumbers(cmr).map { checkResponse =>
+          Ok(Json.toJson(checkResponse))
         }
       })
     }

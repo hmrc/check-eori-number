@@ -23,7 +23,7 @@ import play.api.test.{FakeRequest, Helpers, FakeHeaders}
 import uk.gov.hmrc.checkeorinumber.utils.BaseSpec
 import uk.gov.hmrc.checkeorinumber.connectors.EISConnector
 import uk.gov.hmrc.checkeorinumber.models.{CheckMultipleEoriNumbersRequest, EoriNumber, CheckResponse}
-import uk.gov.hmrc.checkeorinumber.models.internal.{PartyResponse, IdentificationsResponse}
+import uk.gov.hmrc.checkeorinumber.models.eis.{PartyResponse, IdentificationsResponse}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext
