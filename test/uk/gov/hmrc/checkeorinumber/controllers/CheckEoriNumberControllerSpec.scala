@@ -33,8 +33,8 @@ class CheckEoriNumberControllerSpec extends BaseSpec {
 
   val eoriNumber: EoriNumber = "GB123456789000"
   val invalidEoriNumber: EoriNumber = "GB999999999999"
-  val checkResponse = CheckResponse(eoriNumber, true, None, None)
-  val invalidCheckResponse = CheckResponse(invalidEoriNumber, false, None, None)
+  val checkResponse = CheckResponse(eoriNumber, true, None)
+  val invalidCheckResponse = CheckResponse(invalidEoriNumber, false, None)
 
   val controller = new CheckEoriNumberController(
     appConfig,
