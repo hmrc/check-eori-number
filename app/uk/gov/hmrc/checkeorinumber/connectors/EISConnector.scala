@@ -20,7 +20,7 @@ package uk.gov.hmrc.checkeorinumber.connectors
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-import com.google.inject.Inject
+import com.google.inject.{Inject, ImplementedBy}
 import javax.inject.Singleton
 import java.util.UUID
 
@@ -34,14 +34,26 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@ImplementedBy(classOf[EISConnectorImpl])
+trait EISConnector {
+
+  def checkEoriNumbers(
+    checkRequest: CheckMultipleEoriNumbersRequest
+  )(
+    implicit hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[PartyResponse]
+
+}
+
 @Singleton
-class EISConnector @Inject()(
+class EISConnectorImpl @Inject()(
   http: HttpClient,
   environment: Environment,
   configuration: Configuration,
   servicesConfig: ServicesConfig
-)
- {
+) extends EISConnector {
+
    private val eisURL = s"${servicesConfig.baseUrl("eis")}"
 
    private def addHeaders(implicit hc: HeaderCarrier): HeaderCarrier = {
