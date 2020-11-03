@@ -46,15 +46,48 @@ trait EISConnector {
 
 }
 
+trait EISJsonConverter {
+
+  val logger = Logger(getClass)
+  implicit val checkResponseReads = new Reads[CheckResponse] {
+
+    override def reads(json: JsValue): JsResult[CheckResponse] = {
+      val basePath = json \ "identifications"
+      val eori = (basePath \ "eori").as[String]
+
+      JsSuccess(
+        CheckResponse(
+          eori,
+          (basePath \ "valid").as[Boolean],
+          (
+            (basePath \ "traderName").asOpt[TraderName],
+            (basePath \ "address").asOpt[Address]
+          ) match {
+            case (Some(_), None) =>
+              logger.warn(s"traderName found but address is empty for $eori")
+              None
+            case (None, Some(_)) =>
+              logger.warn(s"address found but traderName is empty for $eori")
+              None
+            case (Some(a), Some(b)) => Some(CompanyDetails(a, b))
+            case (None, None) => None
+          }
+        )
+      )
+
+    }
+  }
+
+}
+
 @Singleton
 class EISConnectorImpl @Inject()(
   http: HttpClient,
   environment: Environment,
   configuration: Configuration,
   servicesConfig: ServicesConfig
-) extends EISConnector {
+) extends EISConnector with EISJsonConverter {
 
-   val logger = Logger(getClass)
    private val eisURL = s"${servicesConfig.baseUrl("eis")}"
 
    private def addHeaders(implicit hc: HeaderCarrier): HeaderCarrier = {
@@ -79,35 +112,6 @@ class EISConnectorImpl @Inject()(
      implicit hc: HeaderCarrier,
      ec: ExecutionContext
    ): Future[List[CheckResponse]] = {
-
-     implicit val checkResponseReads = new Reads[CheckResponse] {
-
-       override def reads(json: JsValue): JsResult[CheckResponse] = {
-         val basePath = json \ "identifications"
-         val eori = (basePath \ "eori").as[String]
-
-         JsSuccess(
-           CheckResponse(
-             eori,
-             (basePath \ "valid").as[Boolean],
-             (
-               (basePath \ "traderName").asOpt[TraderName],
-               (basePath \ "address").asOpt[Address]
-             ) match {
-               case (Some(_), None) =>
-                 logger.warn(s"traderName found but address is empty for $eori")
-                 None
-               case (None, Some(_)) =>
-                 logger.warn(s"address found but traderName is empty for $eori")
-                 None
-               case (Some(a), Some(b)) => Some(CompanyDetails(a, b))
-               case (None, None) => None
-             }
-           )
-         )
-
-       }
-     }
 
      val url = s"$eisURL/gbeorichecker/gbeorirequest/v1"
      val json = http.POST[CheckMultipleEoriNumbersRequest, JsObject](url, checkRequest)(implicitly, implicitly, addHeaders, ec)

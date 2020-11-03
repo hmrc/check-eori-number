@@ -23,7 +23,6 @@ import play.api.test.{FakeRequest, Helpers, FakeHeaders}
 import uk.gov.hmrc.checkeorinumber.utils.BaseSpec
 import uk.gov.hmrc.checkeorinumber.connectors.EISConnector
 import uk.gov.hmrc.checkeorinumber.models.{CheckMultipleEoriNumbersRequest, EoriNumber, CheckResponse}
-import uk.gov.hmrc.checkeorinumber.models.eis.{PartyResponse, IdentificationsResponse}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext
@@ -79,28 +78,21 @@ class CheckEoriNumberControllerSpec extends BaseSpec {
 
   class MockEISConnector extends EISConnector {
 
-    val mockPartyResponse =
-      PartyResponse(List(IdentificationsResponse(checkResponse)))
-
-    val mockPartyResponseInvalid =
-      PartyResponse(List(IdentificationsResponse(invalidCheckResponse)))
+    val mockCheckResponse = List(checkResponse)
+    val mockCheckResponseInvalid = List(invalidCheckResponse)
 
     def checkEoriNumbers(
       check: CheckMultipleEoriNumbersRequest
     )(
       implicit hc: HeaderCarrier,
       ec: ExecutionContext
-    ): Future[PartyResponse] = check.eoriNumbers match {
-      case List(`eoriNumber`) => Future.successful(mockPartyResponse)
-      case List(`eoriNumber`,`invalidEoriNumber`) => Future.successful(
-        PartyResponse(
-          List(
-            IdentificationsResponse(checkResponse),
-            IdentificationsResponse(invalidCheckResponse)
-          )
-        )
-      )
-      case _=> Future.successful(mockPartyResponseInvalid)
+    ): Future[List[CheckResponse]] = check.eoriNumbers match {
+      case List(`eoriNumber`) =>
+        Future.successful(mockCheckResponse)
+      case List(`eoriNumber`, `invalidEoriNumber`) =>
+        Future.successful(List(checkResponse, invalidCheckResponse))
+      case _ =>
+        Future.successful(mockCheckResponseInvalid)
     }
   }
 
