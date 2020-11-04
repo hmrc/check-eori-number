@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.checkeorinumber.models.internal
+package uk.gov.hmrc.checkeorinumber.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class PartyResponse(party: List[IdentificationsResponse])
+case class CompanyDetails (
+  traderName: TraderName,
+  address: Address
+)
 
-object PartyResponse {
-  implicit val partyResponseFormat: OFormat[PartyResponse] = Json.format
+object CompanyDetails {
+  implicit val format: OFormat[CompanyDetails] = Json.format[CompanyDetails]
 }
-
-
