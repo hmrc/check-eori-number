@@ -100,9 +100,10 @@ class EISConnectorImpl @Inject()(
        "X-Correlation-ID" -> UUID.randomUUID().toString,
        HeaderNames.DATE -> ZonedDateTime.now().format(formatter),
        HeaderNames.CONTENT_TYPE -> ContentTypes.JSON,
-       HeaderNames.ACCEPT -> ContentTypes.JSON
+       HeaderNames.ACCEPT -> ContentTypes.JSON,
+       "Environment" -> s"${servicesConfig.getConfString("eis.environment", "")}"
      ).copy(
-       authorization = Some(Authorization(s"Bearer ${servicesConfig.getConfString("eoi.token", "")}"))
+       authorization = Some(Authorization(s"Bearer ${servicesConfig.getConfString("eis.token", "")}"))
      )
    }
 
