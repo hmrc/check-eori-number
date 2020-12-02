@@ -86,7 +86,7 @@ class CheckEoriNumberControllerSpec extends BaseSpec {
     )(
       implicit hc: HeaderCarrier,
       ec: ExecutionContext
-    ): Future[List[CheckResponse]] = check.eoriNumbers match {
+    ): Future[List[CheckResponse]] = check.eoris match {
       case List(`eoriNumber`) =>
         Future.successful(mockCheckResponse)
       case List(`eoriNumber`, `invalidEoriNumber`) =>
