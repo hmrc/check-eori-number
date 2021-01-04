@@ -42,17 +42,14 @@ class CheckEoriNumberControllerSpec extends BaseSpec {
   )
 
   "GET /check-eori/:eoriNumber" should {
-    "return 200" in {
+    "return 200 and expected valid-eori Json" in {
       val result = controller.check(eoriNumber)(fakeRequest)
       status(result) shouldBe Status.OK
       contentAsJson(result) shouldEqual Json.toJson(List(checkResponse))
     }
-    "return expected valid-eori Json" in {
-      val result = controller.check(eoriNumber)(fakeRequest)
-      contentAsJson(result) shouldEqual Json.toJson(List(checkResponse))
-    }
-    "return expected invalid-eori Json" in {
+    "return 404 and expected invalid-eori Json" in {
       val result = controller.check(invalidEoriNumber)(fakeRequest)
+      status(result) shouldBe Status.NOT_FOUND
       contentAsJson(result) shouldEqual Json.toJson(List(invalidCheckResponse))
     }
   }
