@@ -27,8 +27,8 @@ import java.util.UUID
 import play.api.{Configuration, Environment, Logger}
 import play.api.http.{ContentTypes, HeaderNames}
 import play.api.libs.json._
-import uk.gov.hmrc.checkeorinumber.models.{Address, CheckMultipleEoriNumbersRequest, CheckResponse, CompanyDetails, EoriNumber, TraderName}
-import uk.gov.hmrc.http.logging.Authorization
+import uk.gov.hmrc.checkeorinumber.models._
+import uk.gov.hmrc.http.Authorization
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
