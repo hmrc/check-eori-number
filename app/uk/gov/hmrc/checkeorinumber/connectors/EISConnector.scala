@@ -16,22 +16,19 @@
 
 package uk.gov.hmrc.checkeorinumber.connectors
 
-
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-
 import com.google.inject.{ImplementedBy, Inject}
-import javax.inject.Singleton
-import java.util.UUID
-
-import play.api.{Configuration, Environment, Logger}
+import play.api.Logger
 import play.api.http.{ContentTypes, HeaderNames}
 import play.api.libs.json._
 import uk.gov.hmrc.checkeorinumber.models._
-import uk.gov.hmrc.http.Authorization
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.UUID
+import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
 @ImplementedBy(classOf[EISConnectorImpl])
@@ -48,7 +45,7 @@ trait EISConnector {
 
 trait EISJsonConverter {
 
-  val logger = Logger(getClass)
+  val logger: Logger = Logger(getClass)
   implicit val checkResponseReads = new Reads[CheckResponse] {
 
     override def reads(json: JsValue): JsResult[CheckResponse] = {
@@ -83,8 +80,6 @@ trait EISJsonConverter {
 @Singleton
 class EISConnectorImpl @Inject()(
   http: HttpClient,
-  environment: Environment,
-  configuration: Configuration,
   servicesConfig: ServicesConfig
 ) extends EISConnector with EISJsonConverter {
 
@@ -103,7 +98,7 @@ class EISConnectorImpl @Inject()(
        HeaderNames.ACCEPT -> ContentTypes.JSON,
        "Environment" -> s"${servicesConfig.getConfString("eis.environment", "")}"
      ).copy(
-       authorization = Some(Authorization(s"Bearer ${servicesConfig.getConfString("eis.token", "")}"))
+       authorization = None
      )
    }
 
@@ -115,7 +110,12 @@ class EISConnectorImpl @Inject()(
    ): Future[List[CheckResponse]] = {
 
      val url = s"$eisURL/gbeorichecker/gbeorirequest/v1"
-     val json = http.POST[CheckMultipleEoriNumbersRequest, JsObject](url, checkRequest)(implicitly, implicitly, addHeaders, ec)
+     val json = http.POST[CheckMultipleEoriNumbersRequest, JsObject](
+       url,
+       checkRequest,
+       Seq("Authorization" -> s"Bearer ${servicesConfig.getConfString("eis.token", "")}")
+     )(implicitly, implicitly, addHeaders, ec)
+
      json.map(x => (x \ "party").as[List[CheckResponse]])
    }
 }
