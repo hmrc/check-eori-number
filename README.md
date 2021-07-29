@@ -42,12 +42,8 @@ Getting started with Check EORI Number
  | /check-multiple-eori         | POST   | Checks multiple EORI numbers with a maximum of 10 EORI numbers per request|
  
 ### Results
-In a stubbed environment the last digit of each [EORI] Number will return each type of CheckResponse:
-   * 0 or 1 Vaild with no TraderName or Address
-   * 2 to 5 Vaild with TraderName and Address
-   * 6      Vaild with TraderName but no Address
-   * 7      Vaild with Address but no TraderName
-   * 8 or 9 Invalid
+In a stubbed environment each [EORI] will exhibit different behavior [Please see here for details](https://github.com/hmrc/check-eori-number-stub/#readme)
+
 
 Unit tests
 ----------
