@@ -58,16 +58,20 @@ trait EISJsonConverter {
           (basePath \ "valid").as[Boolean],
           (
             (basePath \ "traderName").asOpt[TraderName],
-            (basePath \ "address").asOpt[Address]
+            (basePath \ "address").asOpt[Address],
+            (basePath \ "address").asOpt[AddressNoPostCode]
           ) match {
-            case (Some(_), None) =>
-              logger.warn(s"traderName found but address is empty for $eori")
+            case (Some(_), None, None) =>
+              logger.warn(s"traderName found but address is empty for [$eori]")
               None
-            case (None, Some(_)) =>
-              logger.warn(s"address found but traderName is empty for $eori")
+            case (None, _ ,Some(_))=>
+              logger.warn(s"address found but traderName is empty for [$eori]")
               None
-            case (Some(a), Some(b)) => Some(CompanyDetails(a, b))
-            case (None, None) => None
+            case (Some(a), Some(b), _) =>
+              Some(CompanyDetails(a, b))
+            case (Some(a),None, Some(b)) =>
+              Some(CompanyDetails(a, Address(b.streetAndNumber, b.cityName, "")))
+            case (None, None, None) => None
           }
         )
       )
