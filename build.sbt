@@ -5,13 +5,13 @@ val appName = "check-eori-number"
 
 PlayKeys.playDefaultPort := 8351
 
-val silencerVersion = "1.7.5"
+val silencerVersion = "1.7.9"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
     majorVersion                     := 0,
-    scalaVersion                     := "2.12.13",
+    scalaVersion                     := "2.12.16",
     libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
     // ***************
     // Use the silencer plugin to suppress warnings
