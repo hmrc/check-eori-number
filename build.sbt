@@ -1,6 +1,3 @@
-import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
-
 val appName = "check-eori-number"
 
 PlayKeys.playDefaultPort := 8351
