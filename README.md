@@ -27,8 +27,8 @@ Getting started with Check EORI Number
  
         Run the services against the current versions in dev, stop the CHEN service and start manually
         
-            sm --start CHEN_ALL -f 
-            sm --stop CHEN
+            sm2 --start CHEN_ALL 
+            sm2 --stop CHEN
             cd check-eori-number
             sbt run
 
