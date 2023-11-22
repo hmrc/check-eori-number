@@ -48,7 +48,7 @@ trait EISJsonConverter {
   val logger: Logger = Logger(getClass)
   implicit val checkResponseReads: Reads[CheckResponse] = (json: JsValue) => {
     val basePath = json \ "identifications"
-    val eori = (basePath \ "eori").as[String]
+    val eori     = (basePath \ "eori").as[String]
 
     JsSuccess(
       CheckResponse(
@@ -58,7 +58,7 @@ trait EISJsonConverter {
           (basePath \ "traderName").asOpt[TraderName],
           (basePath \ "address").asOpt[Address],
           (basePath \ "address").asOpt[AddressNoPostCode]
-        )  match {
+        ) match {
           case (Some(_), None, None) =>
             logger.warn(s"traderName found but address is empty for [$eori]")
             None
