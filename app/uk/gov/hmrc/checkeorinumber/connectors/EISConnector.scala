@@ -46,37 +46,34 @@ trait EISConnector {
 trait EISJsonConverter {
 
   val logger: Logger = Logger(getClass)
-  implicit val checkResponseReads = new Reads[CheckResponse] {
+  implicit val checkResponseReads: Reads[CheckResponse] = (json: JsValue) => {
+    val basePath = json \ "identifications"
+    val eori = (basePath \ "eori").as[String]
 
-    override def reads(json: JsValue): JsResult[CheckResponse] = {
-      val basePath = json \ "identifications"
-      val eori     = (basePath \ "eori").as[String]
-
-      JsSuccess(
-        CheckResponse(
-          eori,
-          (basePath \ "valid").as[Boolean],
-          (
-            (basePath \ "traderName").asOpt[TraderName],
-            (basePath \ "address").asOpt[Address],
-            (basePath \ "address").asOpt[AddressNoPostCode]
-          ) match {
-            case (Some(_), None, None) =>
-              logger.warn(s"traderName found but address is empty for [$eori]")
-              None
-            case (None, _, Some(_)) =>
-              logger.warn(s"address found but traderName is empty for [$eori]")
-              None
-            case (Some(a), Some(b), _) =>
-              Some(CompanyDetails(a, b))
-            case (Some(a), None, Some(b)) =>
-              Some(CompanyDetails(a, Address(b.streetAndNumber, b.cityName, "")))
-            case (None, None, None) => None
-          }
-        )
+    JsSuccess(
+      CheckResponse(
+        eori,
+        (basePath \ "valid").as[Boolean],
+        (
+          (basePath \ "traderName").asOpt[TraderName],
+          (basePath \ "address").asOpt[Address],
+          (basePath \ "address").asOpt[AddressNoPostCode]
+        )  match {
+          case (Some(_), None, None) =>
+            logger.warn(s"traderName found but address is empty for [$eori]")
+            None
+          case (None, _, Some(_)) =>
+            logger.warn(s"address found but traderName is empty for [$eori]")
+            None
+          case (Some(a), Some(b), _) =>
+            Some(CompanyDetails(a, b))
+          case (Some(a), None, Some(b)) =>
+            Some(CompanyDetails(a, Address(b.streetAndNumber, b.cityName, "")))
+          case (None, None, None) => None
+        }
       )
+    )
 
-    }
   }
 
 }
