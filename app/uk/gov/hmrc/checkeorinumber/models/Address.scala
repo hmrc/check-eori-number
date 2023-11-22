@@ -25,11 +25,11 @@ case class Address(
 )
 
 case class AddressNoPostCode(
-                    streetAndNumber: String,
-                    cityName: String
-                  )
+  streetAndNumber: String,
+  cityName: String
+)
 
-object AddressNoPostCode{
+object AddressNoPostCode {
   implicit val addressFormat: OFormat[AddressNoPostCode] =
     Json.format[AddressNoPostCode]
 }

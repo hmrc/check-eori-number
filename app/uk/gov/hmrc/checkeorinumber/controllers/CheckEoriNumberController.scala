@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 
-class CheckEoriNumberController @Inject()(
+class CheckEoriNumberController @Inject() (
   appConfig: AppConfig,
   cc: ControllerComponents,
   connector: EISConnector
@@ -38,18 +38,18 @@ class CheckEoriNumberController @Inject()(
     Action.async { implicit request =>
       connector.checkEoriNumbers(CheckMultipleEoriNumbersRequest(List(eoriNumber))).map {
         case cr if cr.forall(x => !x.valid) => NotFound(Json.toJson(cr))
-        case checkResponse => Ok(Json.toJson(checkResponse))
+        case checkResponse                  => Ok(Json.toJson(checkResponse))
       }
     }
   }
 
   def checkMultipleEoris: Action[JsValue] = {
     Action.async(parse.json) { implicit request =>
-      withJsonBody[CheckMultipleEoriNumbersRequest](cmr => {
+      withJsonBody[CheckMultipleEoriNumbersRequest] { cmr =>
         connector.checkEoriNumbers(cmr).map { checkResponse =>
           Ok(Json.toJson(checkResponse))
         }
-      })
+      }
     }
   }
 
