@@ -19,11 +19,11 @@ package uk.gov.hmrc.checkeorinumber.utils
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
-import play.api.test.{FakeRequest}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.checkeorinumber.config.AppConfig
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
 

@@ -17,13 +17,12 @@
 package uk.gov.hmrc.checkeorinumber.connectors
 
 import play.api.libs.json._
-import uk.gov.hmrc.checkeorinumber.utils.BaseSpec
 import uk.gov.hmrc.checkeorinumber.models.CheckResponse
+import uk.gov.hmrc.checkeorinumber.utils.BaseSpec
 
 class EISConnectorSpec extends BaseSpec with EISJsonConverter {
 
-  val eisJson = Json.parse(
-    """
+  val eisJson = Json.parse("""
       |{
       |    "party": [
       |        {

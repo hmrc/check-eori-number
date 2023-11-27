@@ -19,21 +19,20 @@ package uk.gov.hmrc.checkeorinumber.controllers
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import play.api.test.{FakeRequest, Helpers, FakeHeaders}
-import uk.gov.hmrc.checkeorinumber.utils.BaseSpec
+import play.api.test.{FakeHeaders, FakeRequest, Helpers}
 import uk.gov.hmrc.checkeorinumber.connectors.EISConnector
-import uk.gov.hmrc.checkeorinumber.models.{CheckMultipleEoriNumbersRequest, EoriNumber, CheckResponse}
+import uk.gov.hmrc.checkeorinumber.models.{CheckMultipleEoriNumbersRequest, CheckResponse, EoriNumber}
+import uk.gov.hmrc.checkeorinumber.utils.BaseSpec
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckEoriNumberControllerSpec extends BaseSpec {
 
-  val eoriNumber: EoriNumber = "GB123456789000"
+  val eoriNumber: EoriNumber        = "GB123456789000"
   val invalidEoriNumber: EoriNumber = "GB999999999999"
-  val checkResponse = CheckResponse(eoriNumber, true, None)
-  val invalidCheckResponse = CheckResponse(invalidEoriNumber, false, None)
+  val checkResponse                 = CheckResponse(eoriNumber, true, None)
+  val invalidCheckResponse          = CheckResponse(invalidEoriNumber, false, None)
 
   val controller = new CheckEoriNumberController(
     appConfig,
@@ -75,13 +74,13 @@ class CheckEoriNumberControllerSpec extends BaseSpec {
 
   class MockEISConnector extends EISConnector {
 
-    val mockCheckResponse = List(checkResponse)
+    val mockCheckResponse        = List(checkResponse)
     val mockCheckResponseInvalid = List(invalidCheckResponse)
 
     def checkEoriNumbers(
       check: CheckMultipleEoriNumbersRequest
-    )(
-      implicit hc: HeaderCarrier,
+    )(implicit
+      hc: HeaderCarrier,
       ec: ExecutionContext
     ): Future[List[CheckResponse]] = check.eoris match {
       case List(`eoriNumber`) =>
