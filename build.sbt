@@ -1,15 +1,9 @@
-val appName = "check-eori-number"
-
-PlayKeys.playDefaultPort := 8351
-
-val silencerVersion = "1.7.9"
-
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
-    majorVersion                     := 0,
-    scalaVersion                     := "2.13.8",
-    libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
+    majorVersion := 0,
+    scalaVersion := "2.13.8",
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     // ***************
     // Use the silencer plugin to suppress warnings
     scalacOptions += "-P:silencer:pathFilters=routes",
@@ -21,3 +15,8 @@ lazy val microservice = Project(appName, file("."))
   )
   .configs(IntegrationTest)
   .settings(resolvers += Resolver.jcenterRepo)
+
+scalafmtOnCompile        := true
+PlayKeys.playDefaultPort := 8351
+val appName         = "check-eori-number"
+val silencerVersion = "1.7.9"
