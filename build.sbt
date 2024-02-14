@@ -4,6 +4,7 @@ lazy val microservice = Project(appName, file("."))
     majorVersion := 0,
     scalaVersion := "2.13.12",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
+    scalacOptions += "-Wconf:cat=unused-imports&src=routes/.*:s",
   )
   .configs(IntegrationTest)
   .settings(resolvers += Resolver.jcenterRepo)
