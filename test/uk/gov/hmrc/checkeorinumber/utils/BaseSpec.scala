@@ -23,7 +23,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.checkeorinumber.config.AppConfig
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.ExecutionContext
@@ -31,11 +31,11 @@ import scala.concurrent.ExecutionContext
 trait BaseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
 
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
-  val env: Environment = Environment.simple()
-  val configuration: Configuration = Configuration.load(env)
-  val serviceConfig             = new ServicesConfig(configuration)
-  val appConfig                 = new AppConfig(configuration, serviceConfig)
-  implicit val executionContext: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
+  val env: Environment                                 = Environment.simple()
+  val configuration: Configuration                     = Configuration.load(env)
+  val serviceConfig                                    = new ServicesConfig(configuration)
+  val appConfig                                        = new AppConfig(configuration, serviceConfig)
+  implicit val executionContext: ExecutionContext      = app.injector.instanceOf[ExecutionContext]
+  implicit val headerCarrier: HeaderCarrier            = HeaderCarrier()
 
 }
