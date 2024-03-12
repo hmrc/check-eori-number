@@ -5,14 +5,14 @@ object AppDependencies {
 
   val bootstrapVersion = "8.4.0"
 
-  val compile = Seq(
+  val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc" %% "bootstrap-backend-play-30" % bootstrapVersion
   )
 
-  val test = Seq(
-    "uk.gov.hmrc"            %% "bootstrap-test-play-30" % bootstrapVersion % Test,
-    "org.scalatest"          %% "scalatest"              % "3.2.15"         % Test,
-    "org.playframework"      %% "play-test"              % current          % Test,
-    "org.scalatestplus.play" %% "scalatestplus-play"     % "6.0.0"          % "test, it"
-  )
+  val test: Seq[ModuleID] = Seq(
+    "uk.gov.hmrc"            %% "bootstrap-test-play-30" % bootstrapVersion ,
+    "org.scalatest"          %% "scalatest"              % "3.2.17"         ,
+    "org.playframework"      %% "play-test"              % current          ,
+    "org.scalatestplus.play" %% "scalatestplus-play"     % "7.0.1"
+  ).map(_ % Test)
 }
