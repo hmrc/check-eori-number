@@ -31,8 +31,8 @@ class CheckEoriNumberControllerSpec extends BaseSpec {
 
   val eoriNumber: EoriNumber        = "GB123456789000"
   val invalidEoriNumber: EoriNumber = "GB999999999999"
-  val checkResponse                 = CheckResponse(eoriNumber, true, None)
-  val invalidCheckResponse          = CheckResponse(invalidEoriNumber, false, None)
+  val checkResponse: CheckResponse = CheckResponse(eoriNumber, true, None)
+  val invalidCheckResponse: CheckResponse = CheckResponse(invalidEoriNumber, false, None)
 
   val controller = new CheckEoriNumberController(
     appConfig,
@@ -74,8 +74,8 @@ class CheckEoriNumberControllerSpec extends BaseSpec {
 
   class MockEISConnector extends EISConnector {
 
-    val mockCheckResponse        = List(checkResponse)
-    val mockCheckResponseInvalid = List(invalidCheckResponse)
+    val mockCheckResponse: List[CheckResponse] = List(checkResponse)
+    val mockCheckResponseInvalid: List[CheckResponse] = List(invalidCheckResponse)
 
     def checkEoriNumbers(
       check: CheckMultipleEoriNumbersRequest

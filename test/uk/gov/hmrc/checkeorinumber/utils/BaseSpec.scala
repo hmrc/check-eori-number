@@ -19,6 +19,7 @@ package uk.gov.hmrc.checkeorinumber.utils
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.{Configuration, Environment}
 import uk.gov.hmrc.checkeorinumber.config.AppConfig
@@ -29,12 +30,12 @@ import scala.concurrent.ExecutionContext
 
 trait BaseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
 
-  val fakeRequest               = FakeRequest("GET", "/")
-  val env                       = Environment.simple()
-  val configuration             = Configuration.load(env)
+  val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
+  val env: Environment = Environment.simple()
+  val configuration: Configuration = Configuration.load(env)
   val serviceConfig             = new ServicesConfig(configuration)
   val appConfig                 = new AppConfig(configuration, serviceConfig)
-  implicit val executionContext = app.injector.instanceOf[ExecutionContext]
-  implicit val headerCarrier    = HeaderCarrier()
+  implicit val executionContext: ExecutionContext = app.injector.instanceOf[ExecutionContext]
+  implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
 }
