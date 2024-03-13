@@ -25,12 +25,13 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers._
 import play.api.Application
-import play.api.http.Status.OK
+import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.checkeorinumber.connectors.EISConnectorImpl
 import uk.gov.hmrc.checkeorinumber.models.{Address, CheckMultipleEoriNumbersRequest, CheckResponse, CompanyDetails, EoriNumber}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import utils.WiremockServer
 
 import java.time.{ZoneId, ZonedDateTime}
@@ -92,6 +93,18 @@ class EISConnectorISpec
         whenReady(response) { res =>
           res.head.copy(processingDate = processingDate) mustEqual expectedCheckResponse
         }
+      }
+      "return UpstreamErrorResponse and status NOT_FOUND" in {
+
+        val eoriNumber: EoriNumber = "InvalidEORINumber"
+        postStub(Json.obj(), NOT_FOUND)
+
+        val response = intercept[UpstreamErrorResponse] {
+          await(connector.checkEoriNumbers(CheckMultipleEoriNumbersRequest(List(eoriNumber))))
+        }
+
+        response.statusCode mustBe NOT_FOUND
+
       }
     }
   }

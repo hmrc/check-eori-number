@@ -19,7 +19,7 @@ lazy val microservice = Project(appName, file("."))
 
 scalafmtOnCompile        := true
 PlayKeys.playDefaultPort := 8351
-val appName = "check-eori-number"
+val appName         = "check-eori-number"
 val silencerVersion = "1.7.16"
 
 lazy val it = project
@@ -29,9 +29,7 @@ lazy val it = project
   .settings(libraryDependencies ++= AppDependencies.test)
 
 lazy val scoverageSettings: Seq[Setting[_]] = Seq(
-  coverageExcludedPackages := "<empty>;Reverse.*;.*config.ErrorHandler;.*components.*;" +
-    ".*javascript.*;.*Routes.*;.*viewmodels.*;.*ViewUtils.*;.*GuiceInjector;.*views.*;" +
-    ".*Routes.*;.*viewmodels.govuk.*;app.*;prod.*",
+  coverageExcludedPackages := "<empty>;Reverse.*;.*Routes.*;app.*;prod.*",
   coverageMinimumStmtTotal := 90,
   coverageFailOnMinimum    := false,
   coverageHighlighting     := true,
