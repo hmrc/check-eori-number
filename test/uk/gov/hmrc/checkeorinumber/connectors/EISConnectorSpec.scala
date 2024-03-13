@@ -22,7 +22,7 @@ import uk.gov.hmrc.checkeorinumber.utils.BaseSpec
 
 class EISConnectorSpec extends BaseSpec with EISJsonConverter {
 
-  val eisJson = Json.parse("""
+  val eisJson: JsObject = Json.parse("""
       |{
       |    "party": [
       |        {
@@ -71,7 +71,7 @@ class EISConnectorSpec extends BaseSpec with EISJsonConverter {
       checkResponseList.isInstanceOf[List[CheckResponse]] shouldBe true
     }
     "include companyDetails only if both traderName and address are present" in {
-      checkResponseList(0).companyDetails.isDefined shouldBe true
+      checkResponseList.head.companyDetails.isDefined shouldBe true
       checkResponseList(1).companyDetails.isEmpty shouldBe true
       checkResponseList(2).companyDetails.isEmpty shouldBe true
     }

@@ -1,27 +1,37 @@
+import uk.gov.hmrc.DefaultBuildSettings
+
+ThisBuild / majorVersion := 0
+ThisBuild / scalaVersion := "2.13.13"
+
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
-    majorVersion := 0,
-    scalaVersion := "2.13.12",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    // ***************
-    // Use the silencer plugin to suppress warnings
     scalacOptions += "-P:silencer:pathFilters=routes",
     scalacOptions += "-Wconf:cat=unused-imports&src=routes/.*:s",
     libraryDependencies ++= Seq(
       compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
       "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
-    )
-    // ***************
+    ),
+    scoverageSettings
   )
-  .configs(IntegrationTest)
   .settings(resolvers += Resolver.jcenterRepo)
-  .settings(
-    // To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
-    libraryDependencySchemes ++= Seq("org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always)
-  )
 
 scalafmtOnCompile        := true
 PlayKeys.playDefaultPort := 8351
 val appName         = "check-eori-number"
-val silencerVersion = "1.7.14"
+val silencerVersion = "1.7.16"
+
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
+  .settings(DefaultBuildSettings.itSettings())
+  .settings(libraryDependencies ++= AppDependencies.test)
+
+lazy val scoverageSettings: Seq[Setting[_]] = Seq(
+  coverageExcludedPackages := "<empty>;Reverse.*;.*Routes.*;app.*;prod.*",
+  coverageMinimumStmtTotal := 90,
+  coverageFailOnMinimum    := false,
+  coverageHighlighting     := true,
+  Test / parallelExecution := false
+)

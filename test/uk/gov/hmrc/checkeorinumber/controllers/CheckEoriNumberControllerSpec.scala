@@ -16,6 +16,10 @@
 
 package uk.gov.hmrc.checkeorinumber.controllers
 
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{reset, when}
+import org.scalatest.BeforeAndAfterEach
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -23,30 +27,40 @@ import play.api.test.{FakeHeaders, FakeRequest, Helpers}
 import uk.gov.hmrc.checkeorinumber.connectors.EISConnector
 import uk.gov.hmrc.checkeorinumber.models.{CheckMultipleEoriNumbersRequest, CheckResponse, EoriNumber}
 import uk.gov.hmrc.checkeorinumber.utils.BaseSpec
-import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class CheckEoriNumberControllerSpec extends BaseSpec {
+class CheckEoriNumberControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
-  val eoriNumber: EoriNumber        = "GB123456789000"
-  val invalidEoriNumber: EoriNumber = "GB999999999999"
-  val checkResponse                 = CheckResponse(eoriNumber, true, None)
-  val invalidCheckResponse          = CheckResponse(invalidEoriNumber, false, None)
+  val eoriNumber: EoriNumber              = "GB123456789000"
+  val invalidEoriNumber: EoriNumber       = "GB999999999999"
+  val checkResponse: CheckResponse        = CheckResponse(eoriNumber, valid = true, None)
+  val invalidCheckResponse: CheckResponse = CheckResponse(invalidEoriNumber, valid = false, None)
+  val mockEISConnector: EISConnector      = mock[EISConnector]
 
   val controller = new CheckEoriNumberController(
     appConfig,
     Helpers.stubControllerComponents(),
-    new MockEISConnector()
+    mockEISConnector
   )
+
+  override def beforeEach(): Unit = {
+    reset(mockEISConnector)
+    super.beforeEach()
+  }
 
   "GET /check-eori/:eoriNumber" should {
     "return 200 and expected valid-eori Json" in {
+      when(mockEISConnector.checkEoriNumbers(any())(any(), any())).thenReturn(Future.successful(List(checkResponse)))
+
       val result = controller.check(eoriNumber)(fakeRequest)
       status(result) shouldBe Status.OK
       contentAsJson(result) shouldEqual Json.toJson(List(checkResponse))
     }
     "return 404 and expected invalid-eori Json" in {
+      when(mockEISConnector.checkEoriNumbers(any())(any(), any())).thenReturn(
+        Future.successful(List(invalidCheckResponse))
+      )
       val result = controller.check(invalidEoriNumber)(fakeRequest)
       status(result) shouldBe Status.NOT_FOUND
       contentAsJson(result) shouldEqual Json.toJson(List(invalidCheckResponse))
@@ -61,34 +75,20 @@ class CheckEoriNumberControllerSpec extends BaseSpec {
     )
     val request = FakeRequest("POST", "/check-multiple-eori", FakeHeaders(), jsonBody)
     "return 200" in {
+      when(mockEISConnector.checkEoriNumbers(any())(any(), any())).thenReturn(
+        Future.successful(List(checkResponse, invalidCheckResponse))
+      )
       val result: Future[play.api.mvc.Result] = controller.checkMultipleEoris().apply(request)
       status(result) shouldBe Status.OK
     }
     "return expected Json" in {
+      when(mockEISConnector.checkEoriNumbers(any())(any(), any())).thenReturn(
+        Future.successful(List(checkResponse, invalidCheckResponse))
+      )
       val result: Future[play.api.mvc.Result] = controller.checkMultipleEoris().apply(request)
       contentAsJson(result) shouldEqual Json.toJson(
         List(checkResponse, invalidCheckResponse)
       )
-    }
-  }
-
-  class MockEISConnector extends EISConnector {
-
-    val mockCheckResponse        = List(checkResponse)
-    val mockCheckResponseInvalid = List(invalidCheckResponse)
-
-    def checkEoriNumbers(
-      check: CheckMultipleEoriNumbersRequest
-    )(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext
-    ): Future[List[CheckResponse]] = check.eoris match {
-      case List(`eoriNumber`) =>
-        Future.successful(mockCheckResponse)
-      case List(`eoriNumber`, `invalidEoriNumber`) =>
-        Future.successful(List(checkResponse, invalidCheckResponse))
-      case _ =>
-        Future.successful(mockCheckResponseInvalid)
     }
   }
 
