@@ -55,7 +55,7 @@ class EISConnectorISpec
 
     "EISConnector" - {
 
-      "return eori response" in {
+      "return eori check response" in {
 
         val eoriNumber: EoriNumber = "GB025115110987654"
         val processingDate         = ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London"))
