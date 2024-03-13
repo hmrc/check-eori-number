@@ -7,7 +7,12 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
+    scalacOptions += "-P:silencer:pathFilters=routes",
     scalacOptions += "-Wconf:cat=unused-imports&src=routes/.*:s",
+    libraryDependencies ++= Seq(
+      compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
+      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
+    ),
     scoverageSettings
   )
   .settings(resolvers += Resolver.jcenterRepo)
@@ -15,6 +20,7 @@ lazy val microservice = Project(appName, file("."))
 scalafmtOnCompile        := true
 PlayKeys.playDefaultPort := 8351
 val appName = "check-eori-number"
+val silencerVersion = "1.7.16"
 
 lazy val it = project
   .enablePlugins(PlayScala)

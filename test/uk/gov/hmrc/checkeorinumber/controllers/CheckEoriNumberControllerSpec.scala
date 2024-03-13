@@ -27,18 +27,16 @@ import play.api.test.{FakeHeaders, FakeRequest, Helpers}
 import uk.gov.hmrc.checkeorinumber.connectors.EISConnector
 import uk.gov.hmrc.checkeorinumber.models.{CheckMultipleEoriNumbersRequest, CheckResponse, EoriNumber}
 import uk.gov.hmrc.checkeorinumber.utils.BaseSpec
-import org.scalatest.BeforeAndAfterEach
-import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class CheckEoriNumberControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
   val eoriNumber: EoriNumber              = "GB123456789000"
   val invalidEoriNumber: EoriNumber       = "GB999999999999"
-  val checkResponse: CheckResponse        = CheckResponse(eoriNumber, true, None)
-  val invalidCheckResponse: CheckResponse = CheckResponse(invalidEoriNumber, false, None)
-  val mockEISConnector                    = mock[EISConnector]
+  val checkResponse: CheckResponse        = CheckResponse(eoriNumber, valid = true, None)
+  val invalidCheckResponse: CheckResponse = CheckResponse(invalidEoriNumber, valid = false, None)
+  val mockEISConnector: EISConnector      = mock[EISConnector]
 
   val controller = new CheckEoriNumberController(
     appConfig,
@@ -53,11 +51,16 @@ class CheckEoriNumberControllerSpec extends BaseSpec with BeforeAndAfterEach {
 
   "GET /check-eori/:eoriNumber" should {
     "return 200 and expected valid-eori Json" in {
+      when(mockEISConnector.checkEoriNumbers(any())(any(), any())).thenReturn(Future.successful(List(checkResponse)))
+
       val result = controller.check(eoriNumber)(fakeRequest)
       status(result) shouldBe Status.OK
       contentAsJson(result) shouldEqual Json.toJson(List(checkResponse))
     }
     "return 404 and expected invalid-eori Json" in {
+      when(mockEISConnector.checkEoriNumbers(any())(any(), any())).thenReturn(
+        Future.successful(List(invalidCheckResponse))
+      )
       val result = controller.check(invalidEoriNumber)(fakeRequest)
       status(result) shouldBe Status.NOT_FOUND
       contentAsJson(result) shouldEqual Json.toJson(List(invalidCheckResponse))
@@ -72,10 +75,16 @@ class CheckEoriNumberControllerSpec extends BaseSpec with BeforeAndAfterEach {
     )
     val request = FakeRequest("POST", "/check-multiple-eori", FakeHeaders(), jsonBody)
     "return 200" in {
+      when(mockEISConnector.checkEoriNumbers(any())(any(), any())).thenReturn(
+        Future.successful(List(checkResponse, invalidCheckResponse))
+      )
       val result: Future[play.api.mvc.Result] = controller.checkMultipleEoris().apply(request)
       status(result) shouldBe Status.OK
     }
     "return expected Json" in {
+      when(mockEISConnector.checkEoriNumbers(any())(any(), any())).thenReturn(
+        Future.successful(List(checkResponse, invalidCheckResponse))
+      )
       val result: Future[play.api.mvc.Result] = controller.checkMultipleEoris().apply(request)
       contentAsJson(result) shouldEqual Json.toJson(
         List(checkResponse, invalidCheckResponse)

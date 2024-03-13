@@ -17,6 +17,7 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.OptionValues
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -26,9 +27,9 @@ import org.scalatest.matchers.must.Matchers._
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.checkeorinumber.connectors.{EISConnector, EISConnectorImpl}
-import uk.gov.hmrc.checkeorinumber.models.{CheckMultipleEoriNumbersRequest, CheckResponse, EoriNumber}
+import play.api.libs.json.{JsObject, JsValue, Json}
+import uk.gov.hmrc.checkeorinumber.connectors.EISConnectorImpl
+import uk.gov.hmrc.checkeorinumber.models.{Address, CheckMultipleEoriNumbersRequest, CheckResponse, CompanyDetails, EoriNumber}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WiremockServer
 
@@ -58,25 +59,44 @@ class EISConnectorISpec
 
         val eoriNumber: EoriNumber = "GB025115110987654"
         val processingDate         = ZonedDateTime.now.withZoneSameInstant(ZoneId.of("Europe/London"))
+
         val expectedCheckResponse = CheckResponse(
           eoriNumber,
           valid = true,
-          None,
+          Some(CompanyDetails("Firstname LastName", Address("999 High Street", "CityName", "CityName"))),
           processingDate
         )
 
-        val jsonResponse = Json.toJson(List(expectedCheckResponse))
-        postStub(jsonResponse, OK)
+        val eisJson = Json.parse(s"""
+                               |{
+                               |    "party": [
+                               |        {
+                               |          "identifications": {
+                               |            "eori": "GB025115110987654",
+                               |            "valid": true,
+                               |            "traderName": "Firstname LastName",
+                               |            "address": {
+                               |              "streetAndNumber": "999 High Street",
+                               |              "cityName": "CityName",
+                               |              "postcode": "CityName"
+                               |            }
+                               |          }
+                               |        }
+                               |        ]
+                               |}
+    """.stripMargin).as[JsObject]
+
+        postStub(eisJson, OK)
 
         val response = connector.checkEoriNumbers(CheckMultipleEoriNumbersRequest(List(eoriNumber)))
         whenReady(response) { res =>
-          res.head mustEqual expectedCheckResponse
+          res.head.copy(processingDate = processingDate) mustEqual expectedCheckResponse
         }
       }
     }
   }
 
-  private def postStub(body: JsValue, status: Int) =
+  private def postStub(body: JsValue, status: Int): StubMapping =
     mockServer.stubFor(
       post(urlMatching("/gbeorichecker/gbeorirequest/v1"))
         .willReturn(
@@ -85,5 +105,4 @@ class EISConnectorISpec
             .withBody(body.toString())
         )
     )
-
 }
