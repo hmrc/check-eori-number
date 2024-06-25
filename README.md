@@ -6,6 +6,11 @@ This microservice provides users with a way to:
 * check if an [EORI] number beginning with GB (issued by the UK) is valid.
 * view the name and address of the business that the [EORI] number is registered to (if the business agreed to share this information).
 
+Other related EORI CHECKER services:
+- Backend service: [Check-Eori-Number-Api](https://github.com/hmrc/check-eori-number-api)
+- Frontend service: [Check-Eori-Number-Frontend](https://github.com/hmrc/check-eori-number-frontend)
+- Stubs: [Check-Eori-Number-Stub](https://github.com/hmrc/check-eori-number-stub)
+
 Requirements
 ------------
 
