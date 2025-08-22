@@ -15,7 +15,6 @@ lazy val microservice = Project(appName, file("."))
     ),
     scoverageSettings
   )
-  .settings(resolvers += Resolver.jcenterRepo)
 
 scalafmtOnCompile        := true
 PlayKeys.playDefaultPort := 8351
