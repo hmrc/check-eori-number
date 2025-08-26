@@ -1,7 +1,7 @@
 import uk.gov.hmrc.DefaultBuildSettings
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.13"
+ThisBuild / scalaVersion := "2.13.16"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala,SbtDistributablesPlugin)
@@ -15,12 +15,11 @@ lazy val microservice = Project(appName, file("."))
     ),
     scoverageSettings
   )
-  .settings(resolvers += Resolver.jcenterRepo)
 
 scalafmtOnCompile        := true
 PlayKeys.playDefaultPort := 8351
 val appName         = "check-eori-number"
-val silencerVersion = "1.7.16"
+val silencerVersion = "1.7.19"
 
 lazy val it = project
   .enablePlugins(PlayScala)
