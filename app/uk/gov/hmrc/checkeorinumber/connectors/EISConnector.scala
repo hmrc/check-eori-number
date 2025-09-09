@@ -22,7 +22,8 @@ import play.api.http.{ContentTypes, HeaderNames}
 import play.api.libs.json._
 import uk.gov.hmrc.checkeorinumber.models._
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.ZonedDateTime
@@ -80,7 +81,7 @@ trait EISJsonConverter {
 
 @Singleton
 class EISConnectorImpl @Inject() (
-  http: HttpClient,
+  http: HttpClientV2,
   servicesConfig: ServicesConfig
 ) extends EISConnector
     with EISJsonConverter {
@@ -111,12 +112,12 @@ class EISConnectorImpl @Inject() (
     ec: ExecutionContext
   ): Future[List[CheckResponse]] = {
 
-    val url = s"$eisURL/gbeorichecker/gbeorirequest/v1"
-    val json = http.POST[CheckMultipleEoriNumbersRequest, JsObject](
-      url,
-      checkRequest,
-      Seq("Authorization" -> s"Bearer ${servicesConfig.getConfString("eis.token", "")}")
-    )(implicitly, implicitly, addHeaders, ec)
+    val url = url"$eisURL/gbeorichecker/gbeorirequest/v1"
+    val json = http
+      .post(url)(addHeaders)
+      .withBody(Json.toJson(checkRequest))
+      .setHeader("Authorization" -> s"Bearer ${servicesConfig.getConfString("eis.token", "")}")
+      .execute[JsObject]
 
     json.map(x => (x \ "party").as[List[CheckResponse]])
   }
