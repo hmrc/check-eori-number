@@ -19,7 +19,6 @@ package uk.gov.hmrc.checkeorinumber.controllers
 import javax.inject.Inject
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.checkeorinumber.config.AppConfig
 import uk.gov.hmrc.checkeorinumber.connectors.EISConnector
 import uk.gov.hmrc.checkeorinumber.models._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -27,7 +26,6 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import scala.concurrent.ExecutionContext
 
 class CheckEoriNumberController @Inject() (
-  appConfig: AppConfig,
   cc: ControllerComponents,
   connector: EISConnector
 ) extends BackendController(cc) {
