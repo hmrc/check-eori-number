@@ -3,7 +3,7 @@ import sbt._
 
 object AppDependencies {
 
-  val bootstrapVersion = "10.1.0"
+  val bootstrapVersion = "10.5.0"
 
   val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc" %% "bootstrap-backend-play-30" % bootstrapVersion
@@ -11,8 +11,8 @@ object AppDependencies {
 
   val test: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"            %% "bootstrap-test-play-30" % bootstrapVersion ,
-    "org.scalatest"          %% "scalatest"              % "3.2.17"         ,
+    "org.scalatest"          %% "scalatest"              % "3.2.19"         ,
     "org.playframework"      %% "play-test"              % current          ,
-    "org.scalatestplus.play" %% "scalatestplus-play"     % "7.0.1"
+    "org.scalatestplus.play" %% "scalatestplus-play"     % "7.0.2"
   ).map(_ % Test)
 }

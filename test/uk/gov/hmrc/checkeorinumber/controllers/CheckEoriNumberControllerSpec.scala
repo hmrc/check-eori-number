@@ -39,7 +39,6 @@ class CheckEoriNumberControllerSpec extends BaseSpec with BeforeAndAfterEach {
   val mockEISConnector: EISConnector      = mock[EISConnector]
 
   val controller = new CheckEoriNumberController(
-    appConfig,
     Helpers.stubControllerComponents(),
     mockEISConnector
   )
@@ -78,14 +77,14 @@ class CheckEoriNumberControllerSpec extends BaseSpec with BeforeAndAfterEach {
       when(mockEISConnector.checkEoriNumbers(any())(any(), any())).thenReturn(
         Future.successful(List(checkResponse, invalidCheckResponse))
       )
-      val result: Future[play.api.mvc.Result] = controller.checkMultipleEoris().apply(request)
+      val result: Future[play.api.mvc.Result] = controller.checkMultipleEoris.apply(request)
       status(result) shouldBe Status.OK
     }
     "return expected Json" in {
       when(mockEISConnector.checkEoriNumbers(any())(any(), any())).thenReturn(
         Future.successful(List(checkResponse, invalidCheckResponse))
       )
-      val result: Future[play.api.mvc.Result] = controller.checkMultipleEoris().apply(request)
+      val result: Future[play.api.mvc.Result] = controller.checkMultipleEoris.apply(request)
       contentAsJson(result) shouldEqual Json.toJson(
         List(checkResponse, invalidCheckResponse)
       )

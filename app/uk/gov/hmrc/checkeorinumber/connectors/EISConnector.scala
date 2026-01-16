@@ -32,6 +32,8 @@ import java.util.UUID
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+
 @ImplementedBy(classOf[EISConnectorImpl])
 trait EISConnector {
 
