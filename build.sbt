@@ -7,6 +7,7 @@ lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala,SbtDistributablesPlugin)
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
+    excludeDependencies += ExclusionRule("org.lz4", "lz4-java"),
 //    scalacOptions += "-Wconf:msg=unused imports&src=routes/.*:s",
 //    scalacOptions += "-Wconf:msg=unused import&src=html/.*:s",
     scalacOptions += "-Wconf:msg=unused import&src=.*\\.routes:s",
