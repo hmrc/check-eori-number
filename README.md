@@ -30,10 +30,10 @@ Getting started with Check EORI Number
 
  2. Start the services:
  
-        Run the services against the current versions in dev, stop the CHEN service and start manually
+        Run the services against the current versions in dev, stop the EORI Checker service and start manually
         
-            sm2 --start CHEN_ALL 
-            sm2 --stop CHEN
+            sm2 --start EORI_CHECKER_ALL 
+            sm2 --stop EORI_CHECKER
             cd check-eori-number
             sbt run
 
